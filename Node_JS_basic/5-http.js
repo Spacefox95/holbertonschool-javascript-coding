@@ -3,27 +3,29 @@ const countStudents = require('./3-read_file_async');
 
 const host = 'localhost';
 const port = 1245;
-const args = process.argv[2];
 
 const requestListener = async (req, res) => {
-  res.writeHead(200, { 'Content-Type': 'text/plain' });
-
   if (req.url === '/') {
-    res.end('Hello Holberton School');
+    res.writeHead(200, { 'Content-Type': 'text/plain' });
+    res.end('Hello Holberton School!');
   } else if (req.url === '/students') {
+    res.writeHead(200, { 'Content-Type': 'text/plain' });
+    res.write('This is the list of our students\n');
     try {
-      res.write('This is the list of our students\n');
-      const result = await countStudents(args);
-      res.end(`${result}`);
+      const database = process.argv[2];
+      const result = await countStudents(database);
+      res.end(result);
     } catch (error) {
       res.end(error.message);
     }
   } else {
-    res.end('Not found');
+    res.writeHead(404, { 'Content-Type': 'text/plain' });
+    res.end('Not Found');
   }
 };
 
 const app = http.createServer(requestListener);
+
 app.listen(port, host, () => {
   console.log(`Server is running on http://${host}:${port}`);
 });
